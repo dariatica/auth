@@ -3,11 +3,13 @@ import * as joi from 'joi';
 
 interface EnvVars {
   RMQ_SERVERS: string[];
+  DATABASE_URL: string;
 }
 
 const envsSchema = joi
   .object({
     RMQ_SERVERS: joi.array().items(joi.string()).required(),
+    DATABASE_URL: joi.string().required(),
   })
   .unknown(true);
 
@@ -25,4 +27,5 @@ const envVars: EnvVars = value;
 
 export const envs = {
   rmq_servers: envVars.RMQ_SERVERS,
+  database_url: envVars.DATABASE_URL,
 };
