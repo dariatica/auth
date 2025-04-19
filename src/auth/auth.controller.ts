@@ -2,6 +2,7 @@ import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
+import { CredentialsUser } from './dto/credentialUser.dto';
 
 @Controller()
 export class AuthController {
@@ -10,5 +11,10 @@ export class AuthController {
   @MessagePattern({ cmd: 'createAuth' })
   create(@Payload() createAuthDto: CreateAuthDto) {
     return this.authService.create(createAuthDto);
+  }
+
+  @MessagePattern({ cmd: 'getUser' })
+  findUser(@Payload() credentialUser: CredentialsUser) {
+    return this.authService.findUser(credentialUser);
   }
 }
