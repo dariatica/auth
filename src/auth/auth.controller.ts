@@ -17,4 +17,9 @@ export class AuthController {
   findUser(@Payload() credentialUser: CredentialsUser) {
     return this.authService.findUser(credentialUser);
   }
+
+  @MessagePattern({ cmd: 'verifyToken' })
+  verifyToken(@Payload() token: string) {
+    return this.authService.verifyToken(token);
+  }
 }

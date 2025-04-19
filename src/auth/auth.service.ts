@@ -5,6 +5,7 @@ import { RpcException } from '@nestjs/microservices';
 import * as bcrypt from 'bcrypt';
 import { CredentialsUser } from './dto/credentialUser.dto';
 import { JwtService } from '@nestjs/jwt';
+import { envs } from 'src/config/envs';
 
 @Injectable()
 export class AuthService extends PrismaClient implements OnModuleInit {
@@ -71,6 +72,31 @@ export class AuthService extends PrismaClient implements OnModuleInit {
       return {
         user: rest,
         token: await this.createToken({ sub: rest.id }),
+      };
+    } catch (error) {
+      this.handleErrors(error);
+    }
+  }
+
+  async verifyToken(token: string) {
+    try {
+      const payload = await this.jwtService.verifyAsync<{ sub: string }>(
+        token,
+        {
+          secret: envs.jwt_secret,
+        },
+      );
+      if (!payload)
+        throw new RpcException({
+          status: HttpStatus.UNAUTHORIZED,
+          message: 'Invalid Token',
+        });
+
+      return {
+        user: {
+          id: payload.sub,
+        },
+        token: await this.createToken({ sub: payload.sub }),
       };
     } catch (error) {
       this.handleErrors(error);
