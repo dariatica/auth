@@ -1,20 +1,23 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
     args:
-      [
-        'build',
-        '-t',
-        'northamerica-south1-docker.pkg.dev/repaso-microservices/image-registery/auth-ms',
-        '-f',
-        'dockerfile.prod',
-        '--platform=linux/x86_64',
-        '.',
-      ]
+      - -c
+      - |
+        docker build -t northamerica-south1-docker.pkg.dev/repaso-microservices/image-registery/auth-ms -f dockerfile.prod --platform=linux/x86_64 --build-arg AUTH_DATABASE_NEON=$$DATABASE_URL .
+    secretEnv: ['DATABASE_URL']
+
   - name: 'gcr.io/cloud-builders/docker'
     args:
       [
         'push',
         'northamerica-south1-docker.pkg.dev/repaso-microservices/image-registery/auth-ms',
       ]
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/1024331323376/secrets/reservations_database_url/versions/1
+      env: 'DATABASE_URL'
+
 options:
   logging: CLOUD_LOGGING_ONLY
